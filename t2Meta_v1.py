@@ -119,7 +119,7 @@ def greedy_stochastic(data):
                     best_locations.append(loc)
         
         if best_locations:
-            # Select one of the best locations randomly
+            # selecciona una de las mejores locaciones de manera random
             best_location = random.choice(best_locations)
             selected_locations.add(best_location)
             for i, sector in enumerate(sectors):
@@ -135,11 +135,11 @@ def greedy_stochastic(data):
 
 # parte del hill climning con la funcion objetivo
 def objective_function(solution, installation_cost):
-    # Ensure all locations in solution are within the valid range
+    # verifica si las soluciones estan en el rango o se sale del index, le da la maña
     if all(0 <= loc < len(installation_cost) for loc in solution):
         return sum(installation_cost[loc] for loc in solution)
     else:
-        # Return a very high cost if the solution is invalid
+        # retorna si la solucion es invalida
         return float('inf')
 
 def generate_neighbor(current_solution, num_locations):
@@ -173,6 +173,7 @@ def hill_climbing(data, max_iterations=1000):
 
 # su wea del brisket mas complicada que la chucha
 
+
 def brisket_variant(data, remove_count=2):
     initial_solution = greedy_stochastic(data)
     current_solution = list(initial_solution)
@@ -183,15 +184,23 @@ def brisket_variant(data, remove_count=2):
         if current_solution:
             current_solution.pop(random.randint(0, len(current_solution) - 1))
     
-    remaining_sectors = set(data['sectors']) - set(sector for loc in current_solution for sector in data['sectors'] if loc in sector['demand_locations'])
+    # Convertir los sectores a tuplas para que sean hashables
+    sector_tuples = {tuple((k, tuple(v) if isinstance(v, list) else v) for k, v in sector.items()) for sector in data['sectors']}
+    covered_sectors = {tuple((k, tuple(v) if isinstance(v, list) else v) for k, v in sector.items()) for loc in current_solution for sector in data['sectors'] if loc in sector['demand_locations']}
+    
+    remaining_sectors = sector_tuples - covered_sectors
+    
     while remaining_sectors:
         best_location = None
         best_cost_benefit = float('inf')
         
         for loc in range(num_locations):
-            if loc in current_solution:
+            if loc in current_solution or loc >= len(installation_cost):
                 continue
-            cost_benefit = installation_cost[loc] / sum(1 for sector in remaining_sectors if loc in sector['demand_locations'])
+            sectors_covered_by_loc = [tuple((k, tuple(v) if isinstance(v, list) else v) for k, v in sector.items()) for sector in data['sectors'] if loc in sector['demand_locations']]
+            if not sectors_covered_by_loc:
+                continue
+            cost_benefit = installation_cost[loc] / len(sectors_covered_by_loc)
             
             if cost_benefit < best_cost_benefit:
                 best_cost_benefit = cost_benefit
@@ -199,9 +208,14 @@ def brisket_variant(data, remove_count=2):
         
         if best_location is not None:
             current_solution.append(best_location)
-            remaining_sectors -= set(sector for sector in remaining_sectors if best_location in sector['demand_locations'])
+            newly_covered_sectors = {tuple((k, tuple(v) if isinstance(v, list) else v) for k, v in sector.items()) for sector in data['sectors'] if best_location in sector['demand_locations']}
+            remaining_sectors -= newly_covered_sectors
     
     return current_solution, objective_function(current_solution, installation_cost)
+
+
+
+
 
 #------------------------------------------
 
