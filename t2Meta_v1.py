@@ -173,7 +173,6 @@ def hill_climbing(data, max_iterations=1000):
 
 # su wea del brisket mas complicada que la chucha
 
-
 def brisket_variant(data, remove_count=2):
     initial_solution = greedy_stochastic(data)
     current_solution = list(initial_solution)
@@ -184,7 +183,6 @@ def brisket_variant(data, remove_count=2):
         if current_solution:
             current_solution.pop(random.randint(0, len(current_solution) - 1))
     
-    # Convertir los sectores a tuplas para que sean hashables
     sector_tuples = {tuple((k, tuple(v) if isinstance(v, list) else v) for k, v in sector.items()) for sector in data['sectors']}
     covered_sectors = {tuple((k, tuple(v) if isinstance(v, list) else v) for k, v in sector.items()) for loc in current_solution for sector in data['sectors'] if loc in sector['demand_locations']}
     
@@ -209,10 +207,13 @@ def brisket_variant(data, remove_count=2):
         if best_location is not None:
             current_solution.append(best_location)
             newly_covered_sectors = {tuple((k, tuple(v) if isinstance(v, list) else v) for k, v in sector.items()) for sector in data['sectors'] if best_location in sector['demand_locations']}
+            if newly_covered_sectors == remaining_sectors:
+                break  # Salir del bucle si no se cubren nuevos sectores se quedaba en un infinito sin esto
             remaining_sectors -= newly_covered_sectors
+        else:
+            break  # lo mismo se queda en el infinito
     
     return current_solution, objective_function(current_solution, installation_cost)
-
 
 
 
