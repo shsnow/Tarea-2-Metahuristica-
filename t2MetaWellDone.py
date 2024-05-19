@@ -2,36 +2,6 @@ import random
 import time
 import matplotlib.pyplot as plt
 
-def brisket_benchmark(file_name, num_executions=5, remove_count=2):
-    execution_times = []
-    objective_function_values = []
-
-    for _ in range(num_executions):
-        data = read_file(file_name)
-
-        start_time = time.time()
-        brisket_solution, brisket_fitness = brisket_variant(data, remove_count)
-        end_time = time.time()
-
-        execution_time = end_time - start_time
-        execution_times.append(execution_time)
-        objective_function_values.append(brisket_fitness)
-
-    avg_execution_time = sum(execution_times) / num_executions
-    avg_fitness = sum(objective_function_values) / num_executions
-
-    print(f"Avg Execution Time: {avg_execution_time} seconds")
-    print(f"Avg Fitness: {avg_fitness}")
-
-    plt.plot(range(num_executions), objective_function_values, marker='o')
-    plt.title('Convergence Plot')
-    plt.xlabel('Execution')
-    plt.ylabel('Objective Function Value')
-    plt.show()
-
-
-
-
 def read_file(file_name):
     with open(file_name, 'r') as file:
         lines = file.readlines()
@@ -84,7 +54,6 @@ def read_file(file_name):
         "installation_cost": installation_cost,
         "sectors": list_maps_demands
     }
-
 
 def print_data(result):    
     print("Número de sectores:", result["num_sectors"])
@@ -244,6 +213,35 @@ def brisket_variant(data, remove_count=2):
             remaining_sectors -= {sector_idx for sector_idx in remaining_sectors if best_location in data['sectors'][sector_idx]['satisfaction_list']}
     
     return current_solution, objective_function(current_solution, installation_cost)
+
+def brisket_benchmark(file_name, num_executions=5, remove_count=2):
+    execution_times = []
+    objective_function_values = []
+
+    for _ in range(num_executions):
+        data = read_file(file_name)
+
+        start_time = time.time()
+        brisket_solution, brisket_fitness = brisket_variant(data, remove_count)
+        end_time = time.time()
+
+        execution_time = end_time - start_time
+        execution_times.append(execution_time)
+        objective_function_values.append(brisket_fitness)
+
+    avg_execution_time = sum(execution_times) / num_executions
+    avg_fitness = sum(objective_function_values) / num_executions
+
+    print(f"Avg Execution Time: {avg_execution_time} seconds")
+    print(f"Avg Fitness: {avg_fitness}")
+
+    plt.plot(range(num_executions), objective_function_values, marker='o')
+    plt.title('Convergence Plot')
+    plt.xlabel('Execution')
+    plt.ylabel('Objective Function Value')
+    plt.show()
+
+
 
 file_name = 'C1.txt'
 data = read_file(file_name)
