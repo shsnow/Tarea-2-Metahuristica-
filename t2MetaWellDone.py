@@ -60,10 +60,12 @@ def print_data(result):
     print("Costo de instalación de cada clínica:", result["installation_cost"])
     
     print("Detalles de los sectores:")
+    sectorCount = 1
     for sector in result["sectors"]:
-        print("Número de lugares que satisfacen la demanda:", sector["demand_places"])
+        print("Sector",sectorCount,"Número de lugares que satisfacen la demanda:", sector["demand_places"])
         print("Lista de lugares donde se puede instalar una clínica:", sector["satisfaction_list"])
         print()
+        sectorCount+=1
 
 # Llamamos a la función para imprimir los valores
 def greedy_deterministic(data):
@@ -213,22 +215,22 @@ def brisket_variant(data, remove_count=2):
 
 file_name = 'C1.txt'
 data = read_file(file_name)
-#print_data(data)
-
+print_data(data)
+print()
 #greedy dterminista (GOOOOD)
 deterministic_solution = greedy_deterministic(data)
 print("Greedy Deterministic Solution:", deterministic_solution)
-
+print()
 #greedy estocastico (GOOOOD)
 stochastic_solution = greedy_stochastic(data)
 print("Greedy Stochastic Solution:", stochastic_solution)
-
+print()
 
 #hill climbing (GOOOOOD)
 best_solution, best_fitness = hill_climbing(data)
 print("Hill Climbing Best Solution:", best_solution)
 print("Hill Climbing Best Fitness:", best_fitness)
-
+print()
 
 #Brisket (GOOOOD ?)
 brisket_solution, brisket_fitness = brisket_variant(data)
