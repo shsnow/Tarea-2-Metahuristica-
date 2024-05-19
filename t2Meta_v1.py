@@ -225,21 +225,21 @@ data = read_file(file_name)
 #print_data(data)
 
 #greedy dterminista (GOOOOD)
-#deterministic_solution = greedy_deterministic(data)
-#print("Greedy Deterministic Solution:", deterministic_solution)
+deterministic_solution = greedy_deterministic(data)
+print("Greedy Deterministic Solution:", deterministic_solution)
 
 #greedy estocastico (GOOOOD)
-#stochastic_solution = greedy_stochastic(data)
-#print("Greedy Stochastic Solution:", stochastic_solution)
+stochastic_solution = greedy_stochastic(data)
+print("Greedy Stochastic Solution:", stochastic_solution)
 
 
 #hill climbing (GOOOOOD)
-#best_solution, best_fitness = hill_climbing(data)
-#print("Hill Climbing Best Solution:", best_solution)
-#print("Hill Climbing Best Fitness:", best_fitness)
+best_solution, best_fitness = hill_climbing(data)
+print("Hill Climbing Best Solution:", best_solution)
+print("Hill Climbing Best Fitness:", best_fitness)
 
 
-#Brisket
+#Brisket (GOOOOD ?)
 brisket_solution, brisket_fitness = brisket_variant(data)
 print("Brisket Variant Best Solution:", brisket_solution)
 print("Brisket Variant Best Fitness:", brisket_fitness)
