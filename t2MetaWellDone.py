@@ -1,4 +1,36 @@
 import random
+import time
+import matplotlib.pyplot as plt
+
+def brisket_benchmark(file_name, num_executions=5, remove_count=2):
+    execution_times = []
+    objective_function_values = []
+
+    for _ in range(num_executions):
+        data = read_file(file_name)
+
+        start_time = time.time()
+        brisket_solution, brisket_fitness = brisket_variant(data, remove_count)
+        end_time = time.time()
+
+        execution_time = end_time - start_time
+        execution_times.append(execution_time)
+        objective_function_values.append(brisket_fitness)
+
+    avg_execution_time = sum(execution_times) / num_executions
+    avg_fitness = sum(objective_function_values) / num_executions
+
+    print(f"Avg Execution Time: {avg_execution_time} seconds")
+    print(f"Avg Fitness: {avg_fitness}")
+
+    plt.plot(range(num_executions), objective_function_values, marker='o')
+    plt.title('Convergence Plot')
+    plt.xlabel('Execution')
+    plt.ylabel('Objective Function Value')
+    plt.show()
+
+
+
 
 def read_file(file_name):
     with open(file_name, 'r') as file:
@@ -215,8 +247,12 @@ def brisket_variant(data, remove_count=2):
 
 file_name = 'C1.txt'
 data = read_file(file_name)
+
+
 print_data(data)
 print()
+
+
 #greedy dterminista (GOOOOD)
 deterministic_solution = greedy_deterministic(data)
 print("Greedy Deterministic Solution:", deterministic_solution)
@@ -237,5 +273,6 @@ brisket_solution, brisket_fitness = brisket_variant(data)
 print("Brisket Variant Best Solution:", brisket_solution)
 print("Brisket Variant Best Fitness:", brisket_fitness)
 
-
+# Ejecutar el benchmark
+brisket_benchmark(file_name)
 
