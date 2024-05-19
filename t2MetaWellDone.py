@@ -176,6 +176,40 @@ def hill_climbing(data, max_iterations=1000):
     
     return current_solution, current_fitness
 
+def brisket_variant(data, remove_count=2):
+    initial_solution = greedy_stochastic(data)
+    current_solution = list(initial_solution)
+    num_locations = data['num_locations']
+    installation_cost = data['installation_cost']
+    
+    for _ in range(remove_count):
+        if current_solution:
+            current_solution.pop(random.randint(0, len(current_solution) - 1))
+    
+    remaining_sectors = set(range(data['num_sectors']))  # Inicializar con todos los sectores
+    while remaining_sectors:
+        best_location = None
+        best_cost_benefit = float('inf')
+        
+        for loc in range(num_locations):
+            if loc in current_solution:
+                continue
+            # Calcular el beneficio/costo de cubrir cada sector restante con esta ubicación
+            if sum(1 for sector_idx in remaining_sectors if loc in data['sectors'][sector_idx]['satisfaction_list']) == 0:
+                continue
+            cost_benefit = installation_cost[loc] / sum(1 for sector_idx in remaining_sectors if loc in data['sectors'][sector_idx]['satisfaction_list'])
+            #print("costo/beneficio",cost_benefit)
+
+            if cost_benefit < best_cost_benefit:
+                best_cost_benefit = cost_benefit
+                best_location = loc
+        
+        if best_location is not None:
+            current_solution.append(best_location)
+            # Eliminar los sectores cubiertos por esta ubicación de los sectores restantes
+            remaining_sectors -= {sector_idx for sector_idx in remaining_sectors if best_location in data['sectors'][sector_idx]['satisfaction_list']}
+    
+    return current_solution, objective_function(current_solution, installation_cost)
 
 file_name = 'C1.txt'
 data = read_file(file_name)
