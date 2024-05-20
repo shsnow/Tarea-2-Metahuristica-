@@ -2,6 +2,25 @@ import random
 import time
 import matplotlib.pyplot as plt
 
+def RandomNumber(initial, final):
+    # Valores para el generador congruencial lineal ni puta idea que es 
+    a = 1664525
+    c = 1013904223
+    m = 2**32
+    
+    # Usar la marca de tiempo actual como semilla
+    seed = int(time.time() * 1000) % m  # Convertir el tiempo actual en milisegundos y ajustarlo con el módulo m
+
+    # Generar un número pseudoaleatorio usando el método LCG
+    seed = (a * seed + c) % m
+    random_number = seed
+    
+    # Escalar el número aleatorio al rango deseado
+    rango = final - initial + 1
+    result = initial + (random_number % rango)
+    
+    return result
+
 def read_file(file_name):
     with open(file_name, 'r') as file:
         lines = file.readlines()
@@ -133,8 +152,10 @@ def objective_function(solution, installation_cost):
 
 def generate_neighbor(current_solution, num_locations):
     neighbor = current_solution[:]
-    index = random.randint(0, len(neighbor) - 1)
-    new_loc = random.randint(0, num_locations - 1)
+    #index = random.randint(0, len(neighbor) - 1)
+    index = RandomNumber(0, len(neighbor) - 1)
+    #new_loc = random.randint(0, num_locations - 1)
+    new_loc = RandomNumber(0, num_locations - 1)
     neighbor[index] = new_loc
     return neighbor
 
