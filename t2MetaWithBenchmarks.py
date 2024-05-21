@@ -231,11 +231,12 @@ def brisket_variant(data, remove_count=2):
     return current_solution, objective_function(current_solution, installation_cost)
 
 def convergence_plot(executions, values, algorithm):
+    #se genera un gráfico de línea de los valores de la función objetivo a lo largo de las ejecuciones
     plt.plot(range(executions), values, marker='o')
     plt.title('Convergence Plot '+algorithm)
     plt.xlabel('Execution')
     plt.ylabel('Objective Function Value')
-    plt.show()
+    plt.show() #se muestra el gráfico generado
 def greedy_stochastic_benchmark(file_name, num_executions=10):
     #se crean listas para guardar los tiempos de ejecución y los valores de la función objetivo
     execution_times = []
@@ -263,81 +264,86 @@ def greedy_stochastic_benchmark(file_name, num_executions=10):
     convergence_plot(num_executions,objective_function_values,'Greedy Stochastic')
 
 def hill_climbing_benchmark(file_name, num_executions=5, max_iterations=1000):
+    #se crean listas para guardar los tiempos de ejecución y los valores de la función objetivo
     execution_times = []
     objective_function_values = []
-
+    #se ejecuta el benchmark según num_executions
     for _ in range(num_executions):
+        #se leen los datos del archivo
         data = read_file(file_name)
-
-        start_time = time.time()
+        start_time = time.time() #tiempo de inicio
+        #se ejecuta el algoritmo de hill climbing y se obtiene el mejor fitness
         _, best_fitness = hill_climbing(data, max_iterations)
-        end_time = time.time()
-
+        end_time = time.time() #tiempo final
+        #se calcula el tiempo de ejecución para esta iteración
         execution_time = end_time - start_time
+        #se guarda el tiempo de ejecución y el valor de la función objetivo
         execution_times.append(execution_time)
         objective_function_values.append(best_fitness)
-
+    #se calcula el tiempo de ejecución promedio y el valor promedio de la función objetivo
     avg_execution_time = sum(execution_times) / num_executions
     avg_fitness = sum(objective_function_values) / num_executions
-
+    #se imprimen los resultados
     print(f"Avg Execution Time Hill Climbing: {avg_execution_time} seconds")
     print(f"Avg Fitness Hill Climbing: {avg_fitness}")
     #se grafican los valores de la función objetivo para cada ejecución
     convergence_plot(num_executions,objective_function_values,'Hill Climbing')
 
 def brisket_benchmark(file_name, num_executions=5, remove_count=2):
+    #se crean listas para guardar los tiempos de ejecución y los valores de la función objetivo
     execution_times = []
     objective_function_values = []
-
+    #se ejecuta el benchmark según num_executions
     for _ in range(num_executions):
+        #se leen los datos del archivo
         data = read_file(file_name)
-
-        start_time = time.time()
+        start_time = time.time() #tiempo de inicio
+        #se ejecuta la variante Brisket y se obtiene la solución y su fitness
         brisket_solution, brisket_fitness = brisket_variant(data, remove_count)
-        end_time = time.time()
-
+        end_time = time.time() #tiempo final
+        #se calcula el tiempo de ejecución para esta iteración
         execution_time = end_time - start_time
+        #se guarda el tiempo de ejecución y el valor de la función objetivo
         execution_times.append(execution_time)
         objective_function_values.append(brisket_fitness)
-
+    #se calcula el tiempo de ejecución promedio y el valor promedio de la función objetivo
     avg_execution_time = sum(execution_times) / num_executions
     avg_fitness = sum(objective_function_values) / num_executions
-
+    #se imprimen los resultados
     print(f"Avg Execution Time Brisket: {avg_execution_time} seconds")
     print(f"Avg Fitness Brisket: {avg_fitness}")
     #se grafican los valores de la función objetivo para cada ejecución
     convergence_plot(num_executions,objective_function_values,'Brisket')
 
-file_name = 'C1.txt'
-data = read_file(file_name)
+def runFiles(file_name):
+    print('- - - - - '+file_name+' - - - - -')
+    data = read_file(file_name)
+    print_data(data)
+    print()
+    # Greedy Deterministic
+    deterministic_solution = greedy_deterministic(data)
+    print("Greedy Deterministic Solution "+file_name+":", deterministic_solution)
+    print()
+    # Greedy Stochastic
+    stochastic_solution, stochastic_cost = greedy_stochastic(data)
+    print("Greedy Stochastic Solution "+file_name+":", stochastic_solution)
+    print("Greedy Stochastic Cost "+file_name+":", stochastic_cost)
+    print()
+    # Hill Climbing
+    best_solution, best_fitness = hill_climbing(data)
+    print("Hill Climbing Best Solution "+file_name+":", best_solution)
+    print("Hill Climbing Best Fitness "+file_name+":", best_fitness)
+    print()
+    # Brisket Variant
+    brisket_solution, brisket_fitness = brisket_variant(data)
+    print("Brisket Variant Best Solution "+file_name+":", brisket_solution)
+    print("Brisket Variant Best Fitness "+file_name+":", brisket_fitness)
+    print()
+    # Benchmark
+    greedy_stochastic_benchmark(file_name)
+    hill_climbing_benchmark(file_name)
+    brisket_benchmark(file_name)
 
-print_data(data)
-print()
+runFiles('C1.txt')
+runFiles('C2.txt')
 
-# Greedy Deterministic
-deterministic_solution = greedy_deterministic(data)
-print("Greedy Deterministic Solution:", deterministic_solution)
-print()
-
-# Greedy Stochastic
-stochastic_solution, stochastic_cost = greedy_stochastic(data)
-print("Greedy Stochastic Solution:", stochastic_solution)
-print("Greedy Stochastic Cost:", stochastic_cost)
-print()
-
-# Hill Climbing
-best_solution, best_fitness = hill_climbing(data)
-print("Hill Climbing Best Solution:", best_solution)
-print("Hill Climbing Best Fitness:", best_fitness)
-print()
-
-# Brisket Variant
-brisket_solution, brisket_fitness = brisket_variant(data)
-print("Brisket Variant Best Solution:", brisket_solution)
-print("Brisket Variant Best Fitness:", brisket_fitness)
-print()
-
-# Benchmark
-greedy_stochastic_benchmark(file_name)
-hill_climbing_benchmark(file_name)
-brisket_benchmark(file_name)
