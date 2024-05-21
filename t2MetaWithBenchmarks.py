@@ -230,6 +230,12 @@ def brisket_variant(data, remove_count=2):
     #se retorna la mejor solución encontrada y su costo total
     return current_solution, objective_function(current_solution, installation_cost)
 
+def convergence_plot(executions, values, algorithm):
+    plt.plot(range(executions), values, marker='o')
+    plt.title('Convergence Plot '+algorithm)
+    plt.xlabel('Execution')
+    plt.ylabel('Objective Function Value')
+    plt.show()
 def greedy_stochastic_benchmark(file_name, num_executions=10):
     #se crean listas para guardar los tiempos de ejecución y los valores de la función objetivo
     execution_times = []
@@ -254,11 +260,7 @@ def greedy_stochastic_benchmark(file_name, num_executions=10):
     print(f"Avg Execution Time Greedy Stochastic: {avg_execution_time} seconds")
     print(f"Avg Fitness Greedy Stochastic: {avg_fitness}")
     #se grafican los valores de la función objetivo para cada ejecución
-    plt.plot(range(num_executions), objective_function_values, marker='o')
-    plt.title('Convergence Plot Greedy Stochastic')
-    plt.xlabel('Execution')
-    plt.ylabel('Objective Function Value')
-    plt.show()
+    convergence_plot(num_executions,objective_function_values,'Greedy Stochastic')
 
 def hill_climbing_benchmark(file_name, num_executions=5, max_iterations=1000):
     execution_times = []
@@ -280,12 +282,8 @@ def hill_climbing_benchmark(file_name, num_executions=5, max_iterations=1000):
 
     print(f"Avg Execution Time Hill Climbing: {avg_execution_time} seconds")
     print(f"Avg Fitness Hill Climbing: {avg_fitness}")
-
-    plt.plot(range(num_executions), objective_function_values, marker='o')
-    plt.title('Convergence Plot Hill Climbing')
-    plt.xlabel('Execution')
-    plt.ylabel('Objective Function Value')
-    plt.show()
+    #se grafican los valores de la función objetivo para cada ejecución
+    convergence_plot(num_executions,objective_function_values,'Hill Climbing')
 
 def brisket_benchmark(file_name, num_executions=5, remove_count=2):
     execution_times = []
@@ -307,12 +305,8 @@ def brisket_benchmark(file_name, num_executions=5, remove_count=2):
 
     print(f"Avg Execution Time Brisket: {avg_execution_time} seconds")
     print(f"Avg Fitness Brisket: {avg_fitness}")
-
-    plt.plot(range(num_executions), objective_function_values, marker='o')
-    plt.title('Convergence Plot Brisket')
-    plt.xlabel('Execution')
-    plt.ylabel('Objective Function Value')
-    plt.show()
+    #se grafican los valores de la función objetivo para cada ejecución
+    convergence_plot(num_executions,objective_function_values,'Brisket')
 
 file_name = 'C1.txt'
 data = read_file(file_name)
