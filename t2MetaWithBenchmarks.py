@@ -1,27 +1,22 @@
 import random
 import time
 import matplotlib.pyplot as plt
-
 def RandomNumber(initial, final):
-    # Valores para el generador congruencial lineal ni puta idea que es 
+    #valores para el generador congruencial lineal
     a = 1664525
     c = 1013904223
     m = 2**32
-    
-    # Usar la marca de tiempo actual como semilla
+    #usar la marca de tiempo actual como semilla
     seed = int(time.time() * 1000) % m  # Convertir el tiempo actual en milisegundos y ajustarlo con el módulo m
-
-    # Generar un número pseudoaleatorio usando el método LCG
+    #generar un número pseudoaleatorio usando el método LCG
     seed = (a * seed + c) % m
     random_number = seed
-    
-    # Escalar el número aleatorio al rango deseado
+    #escalar el número aleatorio a un rango
     rango = final - initial + 1
     result = initial + (random_number % rango)
-    
     return result
-
 def read_file(file_name):
+    #leer archivo
     with open(file_name, 'r') as file:
         lines = file.readlines()
     
@@ -33,7 +28,7 @@ def read_file(file_name):
     sectors = []
     list_maps_demands = []
     index = 2
-    
+    #extraer los datos de las ubicaciones
     for _ in range(num_locations):
         linea = lines[index]
         elements = linea.split()
@@ -42,7 +37,7 @@ def read_file(file_name):
         index += 1
         if len(installation_cost) == num_locations:
             break
-    
+    #extraer los datos de los sectores
     for sec in range(num_sectors):
         list_demands = []    
         num_demand_locations = int(lines[index].split()[-1])
@@ -59,15 +54,15 @@ def read_file(file_name):
                 break
         placesMap = {"demand_places": num_demand_locations, "satisfaction_list": list_demands}
         list_maps_demands.append(placesMap)
-        
+    #retornar toda la data
     return {
         "num_sectors": num_sectors,
         "num_locations": num_locations,
         "installation_cost": installation_cost,
         "sectors": list_maps_demands
     }
-
 def print_data(result):
+    #imprimir resultados
     print("Número de sectores:", result["num_sectors"])
     print("Número de ubicaciones:", result["num_locations"])
     print("Costo de instalación de cada clínica:", result["installation_cost"])
@@ -79,40 +74,42 @@ def print_data(result):
         print("Lista de lugares donde se puede instalar una clínica:", sector["satisfaction_list"])
         print()
         sectorCount += 1
-
 def greedy_deterministic(data):
+    #extraer el número de ubicaciones, costos de instalación y sectores
     num_locations = data['num_locations']
     installation_cost = data['installation_cost']
     sectors = data['sectors']
-    
+    #inicializar los conjuntos para las ubicaciones seleccionadas y los sectores cubiertos
     selected_locations = set()
     covered_sectors = set()
-    
+    #mientras no se cubran todos los sectores
     while len(covered_sectors) < data['num_sectors']:
         best_location = None
         best_cost_benefit = float('inf')
-        
+        #iterar sobre todas las ubicaciones
         for loc in range(num_locations):
+            #se omiten las ubicaciones ya seleccionadas
             if loc in selected_locations:
                 continue
+            #se calcula el beneficio de seleccionar la ubicación actual
             benefit = sum(1 for i, sector in enumerate(sectors) if loc in sector['satisfaction_list'] and i not in covered_sectors)
-            
+            #si la ubicación ofrece un beneficio, se calcula la relación costo-beneficio
             if benefit > 0 and loc < len(installation_cost):
                 cost_benefit = installation_cost[loc] / benefit
-
+                #se actualiza la mejor ubicación si es que encuentra una mejor relación costo-beneficio
                 if cost_benefit < best_cost_benefit:
                     best_cost_benefit = cost_benefit
                     best_location = loc
-        
+        #si se encontró una mejor ubicación, se agrega a las seleccionadas y se actualizan los sectores cubiertos
         if best_location is not None:
             selected_locations.add(best_location)
             for i, sector in enumerate(sectors):
                 if best_location in sector['satisfaction_list']:
                     covered_sectors.add(i)
         else:
+            #si no se encuentra una ubicación válida se termina el ciclo
             print("No valid location found to cover remaining sectors.")
             break
-    
     return selected_locations
 
 def greedy_stochastic(data, num_iterations=10):
@@ -133,7 +130,9 @@ def greedy_stochastic(data, num_iterations=10):
             if not available_locations:
                 break
             
-            loc = random.choice(available_locations)
+            #se usa RandomNumber para seleccionar una ubicación aleatoria
+            random_index = RandomNumber(0, len(available_locations) - 1)
+            loc = available_locations[random_index]
             selected_locations.add(loc)
             
             for i, sector in enumerate(sectors):
